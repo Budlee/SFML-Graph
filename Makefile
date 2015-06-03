@@ -1,8 +1,8 @@
 CC=g++
 CFLAGS=-c -Wall -std=c++11
 LDFLAGS=
-LIBS=-lsfml-graphics -lsfml-window -lsfml-system -lpthread
-SOURCES=main.cpp GraphLines.cpp 
+LIBS=-lsfml-graphics -lsfml-window -lsfml-system -lpthread -lPocoNet -lPocoFoundation -lPocoNetSSL
+SOURCES=main.cpp GraphLines.cpp OanadaPricePuller.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=graph
 

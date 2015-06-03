@@ -19,28 +19,27 @@
 #define GRAPH_POINT_DISTANCE_SEPERATION 10
 #define MAXIMUM_GRAPH_POINTS 200
 
-
 class GraphLines : public sf::Drawable, public sf::Transformable {
 public:
     GraphLines(uint16_t inScreenWidth, uint16_t inScreenHeight);
     GraphLines(const GraphLines& orig);
     virtual ~GraphLines();
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-    
+
     void setPoint(float value);
     void update();
-    
-    
-    
+
+
+
 private:
     void yValueChange(float newYValue);
-    
-    
+
+
     std::vector<GraphPoint> m_graphPoints;
     std::vector<sf::Vertex> m_vertices;
-    
+
     std::mutex setPointLock;
-    
+
     uint16_t screenWidth, screenHeight;
     uint32_t currentMaxYValue;
 
