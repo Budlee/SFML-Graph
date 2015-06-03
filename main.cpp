@@ -7,24 +7,33 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 
-void renderingThread(sf::RenderWindow* window)
+void renderingThread(sf::RenderWindow* window, GraphLines *glines)
 {
     // the rendering loop  
-    GraphLines glines(window->getSize().x,window->getSize().y);
-    glines.setPoint(32);
-    glines.setPoint(58);
-    glines.setPoint(134);
-    glines.setPoint(4);
-    glines.setPoint(82);
-    glines.setPoint(16);
-    glines.setPoint(256);
+    
+    glines->setPoint(32);
+    glines->setPoint(58);
+    glines->setPoint(134);
+    glines->setPoint(4);
+    glines->setPoint(82);
+    glines->setPoint(16);
+    glines->setPoint(256);
     window->setActive(true);
     while (window->isOpen())
     {
         window->clear();
-        glines.update();
-        window->draw(glines);
+        glines->update();
+        window->draw(*glines);
         window->display();
+    }
+}
+
+void oandaThread(sf::RenderWindow* window, GraphLines *glines)
+{
+    //The getting data
+    while (window->isOpen())
+    {
+        glines->setPoint();
     }
 }
 
@@ -34,7 +43,9 @@ int main( int argc, const char* argv[] )
     sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
     window.setFramerateLimit(60);
     window.setActive(false);
-    std::thread first (renderingThread, &window);
+    GraphLines glines(window.getSize().x,window.getSize().y);
+    std::thread render (renderingThread, &window,&glines);
+    std::thread oanda (renderingThread, oandaThread,&glines);
     while (window.isOpen())
     {
         sf::Event event;
