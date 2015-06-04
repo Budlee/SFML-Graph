@@ -17,7 +17,7 @@
 #include "GraphPoint.h"
 
 #define GRAPH_POINT_DISTANCE_SEPERATION 10
-#define MAXIMUM_GRAPH_POINTS 200
+#define MAXIMUM_GRAPH_POINTS 20
 
 class GraphLines : public sf::Drawable, public sf::Transformable {
 public:

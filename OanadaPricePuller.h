@@ -27,9 +27,11 @@
 #include "rapidjson/stringbuffer.h"
 #include "GraphLines.h"
 
+#define OANDA_DOMAIN "https://stream-fxpractice.oanda.com"
+
 class OanadaPricePuller {
 public:
-    OanadaPricePuller(GraphLines *inG);
+    OanadaPricePuller(GraphLines *inG, std::string inAccessId,std::string inAccessToken);
     OanadaPricePuller(const OanadaPricePuller& orig);
     virtual ~OanadaPricePuller();
 
@@ -39,6 +41,8 @@ private:
     void handleStream(std::streambuf* stream_buffer);
     
     GraphLines *gLines;
+    std::string accessId,accessToken;
+    
 };
 
 #endif	/* OANADAPRICEPULLER_H */

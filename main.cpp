@@ -11,14 +11,6 @@
 void renderingThread(sf::RenderWindow* window, GraphLines *glines)
 {
     // the rendering loop  
-
-//    glines->setPoint(32);
-//    glines->setPoint(58);
-//    glines->setPoint(134);
-//    glines->setPoint(4);
-//    glines->setPoint(82);
-//    glines->setPoint(16);
-//    glines->setPoint(256);
     window->setActive(true);
     while (window->isOpen())
     {
@@ -29,9 +21,9 @@ void renderingThread(sf::RenderWindow* window, GraphLines *glines)
     }
 }
 
-void oandaThread(sf::RenderWindow* window, GraphLines *glines)
+void oandaThread(sf::RenderWindow* window, GraphLines *glines, std::string *accessId, std::string *accessToken)
 {
-    OanadaPricePuller op(glines);
+    OanadaPricePuller op(glines, *accessId, *accessToken);
     while (window->isOpen())
     {
         op.getTick();
@@ -40,13 +32,21 @@ void oandaThread(sf::RenderWindow* window, GraphLines *glines)
 
 int main(int argc, const char* argv[])
 {
-
+    if(argc != 3)
+    {
+        std::cerr<<"Need id and token\n";
+        std::exit(1);
+    }
+    
+    std::string aId = argv[1];
+    std::string aTok = argv[2];
+    
     sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
     window.setFramerateLimit(60);
     window.setActive(false);
     GraphLines glines(window.getSize().x, window.getSize().y);
     std::thread render(renderingThread, &window, &glines);
-    std::thread oanda(oandaThread, &window, &glines);
+    std::thread oanda(oandaThread, &window, &glines,&aId ,&aTok);
     while (window.isOpen())
     {
         sf::Event event;

@@ -90,8 +90,6 @@ void GraphLines::yValueChange(float newYValue)
     float preVal = 100.0 / currentMaxYValue;
     while (it != m_graphPoints.end())
     {
-        std::cout << "Values " << it->getValue() << "\n";
-        std::cout << "new value " << screenHeight - (screenHeight * ((preVal * it->getValue()) / 100.0)) << "\n";
         it->setScreenPosition(screenHeight - (screenHeight * ((preVal * it->getValue()) / 100.0)) + 50);
         ++it;
     }

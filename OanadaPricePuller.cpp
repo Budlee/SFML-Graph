@@ -8,8 +8,10 @@
 #include "OanadaPricePuller.h"
 #include "GraphLines.h"
 
-OanadaPricePuller::OanadaPricePuller(GraphLines *inG)
-:gLines(inG)
+OanadaPricePuller::OanadaPricePuller(GraphLines *inG,std::string inAccessId,std::string inAccessToken)
+: gLines(inG)
+,accessId(inAccessId)
+,accessToken(inAccessToken)
 {
 }
 
@@ -34,51 +36,36 @@ void OanadaPricePuller::handleStream(std::streambuf* stream_buffer)
         {
             oss << *iit++;
         }
-        //print the tick 
         rapidjson::Document d;
         d.Parse(oss.str().c_str());
-        // 2. Modify it by DOM.
-        std::cout << oss.str() << std::endl;
-        
-        if(d.HasMember("tick"))
+        if (d.HasMember("tick"))
         {
             rapidjson::Value& val = d["tick"]["ask"];
             gLines->setPoint(val.GetDouble());
         }
-        else if(d.HasMember("heartbeat"))
+        else if (d.HasMember("heartbeat"))
         {
-            
-        }
-            
-//        s.SetInt(s.GetInt() + 1);
 
-        // 3. Stringify the DOM
+        }
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
         d.Accept(writer);
-
-        // Output {"project":"rapidjson","stars":11}
-//        std::cout << buffer.GetString() << std::endl;
-        
-
         *iit++;
     }
 }
 
 void OanadaPricePuller::getTick()
 {
-    std::string account_id = "";
-    std::string access_token = "";
     std::string instruments = "EUR_USD,USD_CAD,EUR_JPY";
-    std::string domain = "https://stream-fxpractice.oanda.com";
-    
-    try {
-        const Poco::Net::Context::Ptr context = 
-        new Poco::Net::Context(Poco::Net::Context::CLIENT_USE, "", "", "", Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
+//    std::string instruments = "EUR_JPY";
+    try
+    {
+        const Poco::Net::Context::Ptr context =
+                new Poco::Net::Context(Poco::Net::Context::CLIENT_USE, "", "", "", Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
 
         // prepare session
-        Poco::URI uri(domain + std::string("/v1/prices?accountId=") + account_id + std::string("&instruments=") + instruments);
-            
+        Poco::URI uri(OANDA_DOMAIN + std::string("/v1/prices?accountId=") + accessId + std::string("&instruments=") + instruments);
+
         Poco::Net::HTTPSClientSession session(uri.getHost(), uri.getPort(), context);
         session.setKeepAlive(true);
 
@@ -88,7 +75,7 @@ void OanadaPricePuller::getTick()
 
         // send request
         Poco::Net::HTTPRequest req(Poco::Net::HTTPRequest::HTTP_GET, path, Poco::Net::HTTPMessage::HTTP_1_1);
-        req.set("Authorization", std::string("Bearer ") + access_token);
+        req.set("Authorization", std::string("Bearer ") + accessToken);
         session.sendRequest(req);
 
         // get response
